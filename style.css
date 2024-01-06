@@ -1,0 +1,169 @@
+* *,
+::before,
+::after {
+	box-sizing: border-box;
+}
+:root {
+    --clr-background: #2c2d31;
+    --clr-text: #757575;
+    --clr-health: #e44119;
+    --clr-shield-one: #3588de;
+    --clr-shield-two: #04ad9d;
+    --clr-shield-three: #9ba40d;
+
+}
+
+* {
+    margin: 0;
+    line-height: calc(1em + 0.5rem);
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body{
+    font-family: 'General Sans', sans-serif;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+    display: block;
+    max-width: 100%;
+    user-select: none;
+}
+
+button{
+    display: inline-block;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: inherit;
+}
+body{
+    background-color:#0e0e0e ;
+}
+.container{
+    width: 52rem;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    background-color: var(--clr-background);
+    position: relative;
+}
+.enemy{
+    width: 35rem;
+    margin: auto;
+    padding-top: 1rem;
+    position: relative;
+}
+.enemy__img{
+    border-radius: 3%;
+    border: 5px solid black;
+}
+.enemy__health{
+    display: flex;
+    position: relative;
+    bottom:35px;
+    left:450px;
+    gap: 2px;
+}
+
+
+.player{
+    width:15rem;
+    position: relative;
+    bottom:60px;
+    left: 40px;
+}
+
+.player__img{
+    border: solid 7px black;
+    border-radius: 50%;
+    width:9rem;
+    height:9rem;
+}
+
+.player__health{
+    display: flex;
+    position: relative;
+    justify-content: space-around;
+    width:72px;
+    gap:1px;
+    left:110px;
+    bottom:30px;
+}
+
+.player__shield{
+    display: flex;
+    position: relative;
+    gap:0px;
+    left:110px;
+    bottom:30px;
+}
+.slidercontainer {
+    width: 31.5rem; /* Width of the outside container */
+    position: relative;
+    bottom: 240px;
+    left:183px;
+  }
+/* The slider itself */
+.slider {
+    border-radius: 2px;
+    width: 500px; /* Full-width */
+    height: 20px; /* Specified height */
+    background: black; /* Grey background */
+    position: relative;
+}
+
+.slider__pointer {
+    appearance: none;
+    border-radius: 2px;
+    width: 10px;
+    height: 20px; 
+    background: white;
+    position: absolute;
+}
+  
+
+/* utils */
+.rectangle {
+    height: 20px;
+    display: inline-block;
+    background-color: #3498db; /* Add a background color to the rectangles */
+    position: absolute;
+}
+.heart{
+    border: solid 3px black;
+    border-radius: 50%;
+    background-color: var(--clr-health);
+    width: 1.5rem;
+    height: 1.5rem;
+}
+.shield{
+    border: solid 3px black;
+    width: 1.5rem;
+    height: 1.5rem;
+}
+.blue{
+    background-color: var(--clr-shield-one);
+}
+.teal{
+    background-color: var(--clr-shield-two);
+}
+.yellow{
+    background-color: var(--clr-shield-three);
+}
+
+h1{
+    position: relative;
+    bottom: 200px;
+    text-align: center;
+    color: #757575;
+    font-size: 2.5rem;
+}
