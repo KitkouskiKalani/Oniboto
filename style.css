@@ -20,10 +20,15 @@
 
 html {
     scroll-behavior: smooth;
+    height: 100%;
+    width: 100%;
 }
 
 body{
     font-family: 'General Sans', sans-serif;
+    background-color: var(--clr-background);
+    height: 100%;
+    width: 100%;
 }
 
 img,
@@ -36,119 +41,162 @@ svg {
     user-select: none;
 }
 
-button{
-    display: inline-block;
-    padding: 0;
-    border: none;
-    background: none;
-    cursor: pointer;
-    color: inherit;
-}
-body{
-    background-color:#0e0e0e ;
-}
-.container{
-    width: 52rem;
-    margin-left: auto;
-    margin-right: auto;
+nav {
+    background-color: #202124;
     padding-left: 0.5rem;
     padding-right: 0.5rem;
+    height: 50px;
+    overflow: hidden;
+    box-shadow: 0px 4px 2px -2px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.menu-icon {
+    padding: 10px;
+    cursor: pointer;
+    color: white;
+}
+
+.settings {
+    display: inline;
+    font-size: large;
+    margin-right: 10px; /* Added margin to the right */
+    width: 100%;
+    height: 100%;
+    color: white;
+    cursor: pointer;
+}
+
+.sign-in-button {
+    background-color: #202124;
+    border: 1px solid white;
+    color: white;
+    border-radius: 10px 40px 40px 10px;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.container{
+    width: 375px;
+    height: 100%;
+    margin-left: auto;
+    margin-right: auto;
     background-color: var(--clr-background);
     position: relative;
 }
 .enemy{
-    width: 35rem;
+    width: 15rem;
     margin: auto;
     padding-top: 1rem;
     position: relative;
+    display: flex;
+    flex-direction: column;
 }
 .enemy__img{
     border-radius: 3%;
     border: 5px solid black;
 }
 .enemy__health{
+    margin:auto;
+    margin-top: 5px;
     display: flex;
-    position: relative;
-    bottom:35px;
-    left:450px;
     gap: 2px;
 }
-
-
-.player{
-    width:15rem;
-    position: relative;
-    bottom:60px;
-    left: 40px;
-}
-
-.player__img{
-    border: solid 7px black;
+.enemy__heart{
+    border: solid 5px black;
     border-radius: 50%;
-    width:9rem;
-    height:9rem;
+    background-color: var(--clr-health);
+    width: 2rem;
+    height: 2rem;
 }
 
-.player__health{
-    display: flex;
-    position: relative;
-    justify-content: space-around;
-    width:72px;
-    gap:1px;
-    left:110px;
-    bottom:30px;
-}
-
-.player__shield{
-    display: flex;
-    position: relative;
-    gap:0px;
-    left:110px;
-    bottom:30px;
-}
 .slidercontainer {
-    width: 31.5rem; /* Width of the outside container */
-    position: relative;
-    bottom: 240px;
-    left:183px;
+    margin-top: 5px;
+    width: 375px; /* Width of the outside container */
+    bottom: 60px;
   }
 /* The slider itself */
 .slider {
-    border-radius: 2px;
-    width: 500px; /* Full-width */
-    height: 20px; /* Specified height */
+    margin: auto;
+    width: 320px; /* Full-width */
+    height: 70px; /* Specified height */
     background: black; /* Grey background */
     position: relative;
 }
 
 .slider__pointer {
     appearance: none;
-    border-radius: 2px;
     width: 10px;
-    height: 20px; 
+    height: 70px; 
     background: white;
     position: absolute;
 }
   
 
+.player{
+    margin:auto;
+    margin-top: 10px;
+    width:20rem;
+    bottom:60px;
+    left: 40px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+
+}
+
+.player__img{
+    border: solid 7px black;
+    border-radius: 15%;
+    width:9rem;
+    height:9rem;
+}
+
+.player__attributes{
+    width: 144px;
+    height: 144px;
+}
+.player__health{
+    display: flex;
+    position: relative;
+    justify-content: space-around;
+    width:144px;
+    gap:0px;
+}
+
+.player__heart{
+    border: solid 5px black;
+    border-radius: 50%;
+    background-color: var(--clr-health);
+    width: 47px;
+    height: 47px;
+}
+
+.player__shield{
+    display: flex;
+    position: relative;
+    gap:1px;
+}
+
+
 /* utils */
 .rectangle {
-    height: 20px;
+    height: 70px;
     display: inline-block;
     background-color: #3498db; /* Add a background color to the rectangles */
     position: absolute;
+    
 }
-.heart{
-    border: solid 3px black;
-    border-radius: 50%;
-    background-color: var(--clr-health);
-    width: 1.5rem;
-    height: 1.5rem;
-}
+
 .shield{
-    border: solid 3px black;
-    width: 1.5rem;
-    height: 1.5rem;
+    border: solid 5px black;
+    border-radius: 15%;
+    width: 47px;
+    height: 47px;
 }
 .blue{
     background-color: var(--clr-shield-one);
@@ -161,9 +209,36 @@ body{
 }
 
 h1{
-    position: relative;
-    bottom: 200px;
+    display: none;
+    position: absolute;
+    bottom: 100px;
     text-align: center;
-    color: #757575;
-    font-size: 2.5rem;
+    color: white;
+    -webkit-text-stroke-width: 5px;
+    -webkit-text-stroke-color: black;
+    font-size: 4.5rem;
 }
+
+/* xs */
+/* @media (min-width: 475px) {
+} */
+
+/* sm */
+/* @media (min-width: 640px) {
+} */
+
+/* md */
+/* @media (min-width: 768px) {
+} */
+
+/* lg */
+/* @media (min-width: 1024px) {
+} */
+
+/* xlg */
+/* @media (min-width: 1280px) {
+} */
+
+/* 2xl */
+/* @media (min-width: 1536px) {
+} */

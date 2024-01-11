@@ -4,7 +4,7 @@ function createRectangles() {
   const container = document.getElementById('slider');
 
   for (let i = 0; i < 3; i++) {
-    const width = Math.floor(Math.random() * (40 - 10 + 1)) + 10; // Random width between 10 and 40
+    const width = Math.floor(Math.random() * (15 - 5 + 1)) + 5; // Random width between 10 and 40
 
     if (container) {
       const xPosition = getRandomPosition(container.offsetWidth, width);
@@ -31,7 +31,7 @@ function createRectangles() {
 }
 
 function getRandomPosition(containerWidth, rectangleWidth) {
-  const minDistance = 50;
+  const minDistance = 25;
   let xPosition;
 
   do {
@@ -77,7 +77,7 @@ var pointer = document.querySelector(".slider__pointer");
 
     // Move right
     animation = pointer.animate(
-      [{ left: '0px' }, { left: '500px' }],
+      [{ left: '0px' }, { left: '315px' }],
       { duration: 2000, easing: 'linear', fill: 'forwards' }
     );
 
@@ -85,7 +85,7 @@ var pointer = document.querySelector(".slider__pointer");
     setTimeout(function () {
       // Move left
       animation = pointer.animate(
-        [{ left: '500px' }, { left: '0px' }],
+        [{ left: '315px' }, { left: '0px' }],
         { duration: 2000, easing: 'linear', fill: 'forwards' }
       );
     }, 2000);
