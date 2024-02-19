@@ -1,6 +1,53 @@
 const rectangleData = [];
+const pointer = document.querySelector(".slider__pointer");
+const pregame = document.querySelector(".pregame");
+let gameStarted = false;
+let animation;
+let playerHealth = 3;
+let playerShield = 9;
+let enemyHealth = 3;
 
-function createRectangles() {
+
+// Use DOMContentLoaded event to ensure the DOM is fully loaded immediately followed by creating the blocks 
+document.addEventListener('DOMContentLoaded', createBlocks());
+
+document.body.onkeydown = function(e) {
+  if ((e.key == " " || e.code == "Space" || e.keyCode == 32) && !gameStarted) {
+    e.preventDefault();
+    startGame();
+    
+  } else if (e.key == " " || e.code == "Space" || e.keyCode == 32) {
+    e.preventDefault();
+    console.log("spacebar is clicked")
+    calculateAnimation();
+  }
+};
+
+
+
+
+
+
+
+
+
+// Utility functions
+
+function startGame () {
+  gameStarted = true;
+  movePointer();
+  pregame.style.display = 'none';
+}
+
+/**
+ * Create and append random-sized rectangles within a specified container.
+ * Random widths are generated between 5 and 15 units.
+ * Rectangle positions are determined using a getRandomPosition function.
+ * Rectangle data, including ID, left position, and width, is stored in the rectangleData array.
+ * @function
+ */
+
+function createBlocks() {
   const container = document.getElementById('slider');
 
   for (let i = 0; i < 3; i++) {
@@ -30,6 +77,16 @@ function createRectangles() {
   }
 }
 
+
+
+/**
+ * Generate a random position within a container, ensuring no overlap with existing rectangles.
+ * Used by createBlocks function
+ * @param {number} containerWidth - The width of the container.
+ * @param {number} rectangleWidth - The width of the rectangle to be positioned.
+ * @returns {number} - A random x-position without overlap.
+ */
+
 function getRandomPosition(containerWidth, rectangleWidth) {
   const minDistance = 25;
   let xPosition;
@@ -41,6 +98,17 @@ function getRandomPosition(containerWidth, rectangleWidth) {
   return xPosition;
 }
 
+
+
+
+
+/**
+ * Check if there is an overlap between a given position (x) and rectangles in the rectangleData array.
+ * @param {number} x - The position to check for overlap.
+ * @param {number} minDistance - The minimum distance allowed to consider an overlap.
+ * @returns {boolean} - True if there is an overlap, false otherwise.
+ */
+
 function isOverlap(x, minDistance) {
   for (const rectData of rectangleData) {
     if (Math.abs(x - rectData.left) < minDistance ||
@@ -51,45 +119,37 @@ function isOverlap(x, minDistance) {
   return false; // Not overlapping
 }
 
-// Use DOMContentLoaded event to ensure the DOM is fully loaded
-document.addEventListener('DOMContentLoaded', createRectangles());
+/**
+ * Move the pointer animation from left to right and then back from right to left.
+ * Uses the Web Animations API to animate the 'left' property of the pointer element.
+ * Note: The animation duration is set to 2000 milliseconds with a linear easing function.
+ */
 
+function movePointer() {
 
+  // Move right
+  animation = pointer.animate(
+    [{ left: '0px' }, { left: '315px' }],
+    { duration: 2000, easing: 'linear', fill: 'forwards' }
+  );
 
-
-var pointer = document.querySelector(".slider__pointer");
-  var gameStarted = false;
-  var animation;
-
-  document.body.onkeydown = function(e) {
-    if ((e.key == " " || e.code == "Space" || e.keyCode == 32) && !gameStarted) {
-      e.preventDefault();
-      gameStarted = true;
-      movePointer();
-    } else if (e.key == " " || e.code == "Space" || e.keyCode == 32) {
-      e.preventDefault();
-      console.log("spacebar is clicked")
-      calculateAnimation();
-    }
-  };
-
-  function movePointer() {
-
-    // Move right
+  // Set a timeout for the left movement after the right movement completes
+  setTimeout(function () {
+    // Move left
     animation = pointer.animate(
-      [{ left: '0px' }, { left: '315px' }],
+      [{ left: '315px' }, { left: '0px' }],
       { duration: 2000, easing: 'linear', fill: 'forwards' }
     );
+  }, 2000);
+}
 
-    // Set a timeout for the left movement after the right movement completes
-    setTimeout(function () {
-      // Move left
-      animation = pointer.animate(
-        [{ left: '315px' }, { left: '0px' }],
-        { duration: 2000, easing: 'linear', fill: 'forwards' }
-      );
-    }, 2000);
-  }
+
+
+/**
+ * Calculate and handle animations based on the position of a pointer relative to rectangles.
+ * If the pointer intersects with a rectangle, perform specified actions and remove the rectangle.
+ * Note: Ensure 'animation' is truthy before calling this function.
+ */
 
 function calculateAnimation() {
   if (animation) {
