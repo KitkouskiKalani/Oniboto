@@ -1,5 +1,3 @@
-const rectangleData = [];
-const pointer = document.querySelector(".slider__pointer");
 const pregame = document.querySelector(".pregame");
 let gameStarted = false;
 let animation;
@@ -9,178 +7,158 @@ let enemyHealth = 3;
 
 
 // Use DOMContentLoaded event to ensure the DOM is fully loaded immediately followed by creating the blocks 
-document.addEventListener('DOMContentLoaded', createBlocks());
+// document.addEventListener('DOMContentLoaded', createBlocks());
+// startGame();
 
-document.body.onkeydown = function(e) {
-  if ((e.key == " " || e.code == "Space" || e.keyCode == 32) && !gameStarted) {
-    e.preventDefault();
-    startGame();
+// document.body.onkeydown = function(e) {
+//   if ((e.key == " " || e.code == "Space" || e.keyCode == 32) && !gameStarted) {
+//     e.preventDefault();
+//     // Start game here after user clicks space
+//     // startGame();
     
-  } else if (e.key == " " || e.code == "Space" || e.keyCode == 32) {
-    e.preventDefault();
-    console.log("spacebar is clicked")
-    calculateAnimation();
+//   } else if (e.key == " " || e.code == "Space" || e.keyCode == 32) {
+//     e.preventDefault();
+//     console.log("spacebar is clicked")
+//     calculateAnimation();
+//   }
+// };
+
+// Wait for the HTML document to be fully loaded before running the script
+document.addEventListener('DOMContentLoaded', () => {
+  // Get the canvas element and its drawing context
+  const canvas = document.getElementById('gameCanvas');
+  const ctx = canvas.getContext('2d');
+
+  // Set initial canvas dimensions
+  let canvasWidth = 320;
+  let canvasHeight = 70;
+  canvas.width = canvasWidth;
+  canvas.height = canvasHeight;
+  // Set the background color of the canvas
+  canvas.style.backgroundColor = 'black';
+
+  // Initialize slider dimensions and position
+  let sliderWidth = 10;
+  let sliderHeight = canvasHeight;
+  let sliderX = 0; // Starting X position of the slider
+
+  // Array to store hitboxes
+  let hitboxes = [];
+
+  // Function to draw the slider on the canvas
+  function drawSlider() {
+    ctx.fillStyle = 'white'; // Set slider color
+    ctx.fillRect(sliderX, 0, sliderWidth, sliderHeight); // Draw the slider
   }
-};
 
+  // Function to clear the canvas
+  function clearCanvas() {
+    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+  }
 
-
-
-
-
-
-
-
-// Utility functions
-
-function startGame () {
-  gameStarted = true;
-  movePointer();
-  pregame.style.display = 'none';
-}
-
-/**
- * Create and append random-sized rectangles within a specified container.
- * Random widths are generated between 5 and 15 units.
- * Rectangle positions are determined using a getRandomPosition function.
- * Rectangle data, including ID, left position, and width, is stored in the rectangleData array.
- * @function
- */
-
-function createBlocks() {
-  const container = document.getElementById('slider');
-
-  for (let i = 0; i < 3; i++) {
-    const width = Math.floor(Math.random() * (15 - 5 + 1)) + 5; // Random width between 10 and 40
-
-    if (container) {
-      const xPosition = getRandomPosition(container.offsetWidth, width);
-      const rectangle = document.createElement('div');
-
-      rectangle.className = 'rectangle';
-      rectangle.style.width = `${width}px`;
-      rectangle.style.left = `${xPosition}px`;
-
-      const id = `rectangle_${i}`;
-      rectangle.setAttribute('data-id', id);
-
-      container.appendChild(rectangle);
-
-      // Store rectangle data
-      rectangleData.push({
-        id: id,
-        left: xPosition,
-        width: width
-      });
-      console.log(rectangleData)
+  // Function to move the slider to the right
+  function moveSliderRight() {
+    clearCanvas(); // Clear the canvas before redrawing
+    // Check if the slider is within the bounds of the canvas
+    if (sliderX < canvasWidth - sliderWidth) {
+      sliderX += 1; // Move the slider right
+      drawSlider(); // Redraw the slider
+      drawHitboxes(); // Redraw hitboxes
+    } else {
+      // If the slider reaches the right edge, switch direction
+      clearInterval(moveRightInterval); // Stop moving right
+      moveLeftInterval = setInterval(moveSliderLeft, 10); // Start moving left
     }
   }
-}
 
-
-
-/**
- * Generate a random position within a container, ensuring no overlap with existing rectangles.
- * Used by createBlocks function
- * @param {number} containerWidth - The width of the container.
- * @param {number} rectangleWidth - The width of the rectangle to be positioned.
- * @returns {number} - A random x-position without overlap.
- */
-
-function getRandomPosition(containerWidth, rectangleWidth) {
-  const minDistance = 25;
-  let xPosition;
-
-  do {
-    xPosition = Math.floor(Math.random() * (containerWidth - rectangleWidth + 1));
-  } while (isOverlap(xPosition, minDistance));
-
-  return xPosition;
-}
-
-
-
-
-
-/**
- * Check if there is an overlap between a given position (x) and rectangles in the rectangleData array.
- * @param {number} x - The position to check for overlap.
- * @param {number} minDistance - The minimum distance allowed to consider an overlap.
- * @returns {boolean} - True if there is an overlap, false otherwise.
- */
-
-function isOverlap(x, minDistance) {
-  for (const rectData of rectangleData) {
-    if (Math.abs(x - rectData.left) < minDistance ||
-        Math.abs(x - (rectData.left + rectData.width)) < minDistance) {
-      return true; // Overlapping
+  // Function to move the slider to the left
+  function moveSliderLeft() {
+    clearCanvas(); // Clear the canvas before redrawing
+    if (sliderX > 0) {
+      sliderX -= 1; // Move the slider left
+      drawSlider(); // Redraw the slider
+      drawHitboxes(); // Redraw hitboxes
+    } else {
+      // If the slider reaches the left edge, stop moving
+      clearInterval(moveLeftInterval);
     }
   }
-  return false; // Not overlapping
-}
 
-/**
- * Move the pointer animation from left to right and then back from right to left.
- * Uses the Web Animations API to animate the 'left' property of the pointer element.
- * Note: The animation duration is set to 2000 milliseconds with a linear easing function.
- */
+// Function to create hitboxes with updated constraints
+function createHitboxes() {
+  hitboxes = []; // Reset hitboxes array
+  let minGapBetweenHitboxes = 25; // Minimum gap between hitboxes
+  let safeZoneStart = 50; // No hitbox can start within this distance from the canvas start
+  let attempts = 0; // Track attempts to avoid infinite loops
+  let maxAttempts = 100; // Maximum attempts to place hitboxes
 
-function movePointer() {
+  while (hitboxes.length < 3 && attempts < maxAttempts) {
+    let width = Math.floor(Math.random() * (16 - 8 + 1)) + 8; // Random width between 8 and 16px
+    // Ensure random x position respects the safe zone and potential maximum width of hitboxes
+    let x = Math.floor(Math.random() * (canvasWidth - width - safeZoneStart)) + safeZoneStart;
 
-  // Move right
-  animation = pointer.animate(
-    [{ left: '0px' }, { left: '315px' }],
-    { duration: 2000, easing: 'linear', fill: 'forwards' }
-  );
+    let validPlacement = true; // Assume this placement is valid initially
 
-  // Set a timeout for the left movement after the right movement completes
-  setTimeout(function () {
-    // Move left
-    animation = pointer.animate(
-      [{ left: '315px' }, { left: '0px' }],
-      { duration: 2000, easing: 'linear', fill: 'forwards' }
-    );
-  }, 2000);
-}
-
-
-
-/**
- * Calculate and handle animations based on the position of a pointer relative to rectangles.
- * If the pointer intersects with a rectangle, perform specified actions and remove the rectangle.
- * Note: Ensure 'animation' is truthy before calling this function.
- */
-
-function calculateAnimation() {
-  if (animation) {
-    var computedStyle = getComputedStyle(pointer);
-    var pointerLeft = parseFloat(computedStyle.left);
-    var pointerRight = pointerLeft + pointer.offsetWidth;
-
-    for (let i = 0; i < rectangleData.length; i++) {
-      const rectData = rectangleData[i];
-      var rectLeft = rectData.left;
-      var rectRight = rectData.left + rectData.width;
-
-      if ((pointerLeft >= rectLeft && pointerLeft <= rectRight) ||
-          (pointerRight >= rectLeft && pointerRight <= rectRight)) {
-        console.log(`Pointer is within the rectangle with ID: ${rectData.id}`);
-
-        // Perform further actions here if needed
-
-        // Remove the rectangle from the DOM
-        const container = document.getElementById('slider');
-        const rectangleElement = document.querySelector(`[data-id="${rectData.id}"]`);
-        container.removeChild(rectangleElement);
-
-        // Remove the corresponding data from rectangleData array
-        rectangleData.splice(i, 1);
-
-        break; // Break out of the loop since the rectangle is found and removed
+    // Check against all previously placed hitboxes for valid placement
+    for (let hitbox of hitboxes) {
+      let distance = Math.abs(x - hitbox.x);
+      // If new hitbox is too close to an existing one, invalidate this placement
+      if (distance < width + minGapBetweenHitboxes || x < safeZoneStart) {
+        validPlacement = false;
+        break;
       }
     }
+
+    // If valid, add the new hitbox to the array
+    if (validPlacement) {
+      hitboxes.push({ x, width });
+    } else {
+      attempts++; // Increment attempts if placement was not valid
+    }
   }
+
+  // Ensure hitboxes are sorted by their x position for consistent rendering
+  hitboxes.sort((a, b) => a.x - b.x);
 }
 
+  
 
+  // Function to draw hitboxes on the canvas
+  function drawHitboxes() {
+    hitboxes.forEach(hitbox => {
+      ctx.fillStyle = '#fb7300'; // Set hitbox color
+      ctx.fillRect(hitbox.x, 0, hitbox.width, canvasHeight); // Draw the hitbox
+    });
+  }
 
+  // Function to check if the slider hits any hitboxes
+  function checkHit() {
+    let hit = hitboxes.some(hitbox => sliderX + sliderWidth >= hitbox.x && sliderX <= hitbox.x + hitbox.width);
+    if (hit) {
+      console.log('Hit!'); // Log hit to the console
+      // Remove hit hitbox from the array
+      hitboxes = hitboxes.filter(hitbox => !(sliderX + sliderWidth >= hitbox.x && sliderX <= hitbox.x + hitbox.width));
+      clearCanvas();
+      drawSlider(); // Redraw the slider without the hit hitbox
+      drawHitboxes(); // Redraw remaining hitboxes
+    } else {
+      console.log('No hit'); // Log miss to the console
+    }
+  }
+
+  // Variables to control the interval functions for moving the slider
+  let moveRightInterval, moveLeftInterval;
+
+  // Event listener for keydown events
+  document.addEventListener('keydown', (e) => {
+    if (e.code === 'Space') {
+      checkHit();
+    }
+  });
+
+  // Initialize game elements
+  createHitboxes();
+  drawSlider();
+  drawHitboxes();
+  moveRightInterval = setInterval(moveSliderRight, 10);
+});
