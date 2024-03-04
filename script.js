@@ -45,6 +45,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // Array to store hitboxes
   let hitboxes = [];
 
+  let moveRightInterval, moveLeftInterval;
+  let currentRound = 0;
+  const totalRoundsInSet = 4; // How many rounds in a set
+
   // Function to draw the slider on the canvas
   function drawSlider() {
     ctx.fillStyle = 'white'; // Set slider color
@@ -67,22 +71,26 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       // If the slider reaches the right edge, switch direction
       clearInterval(moveRightInterval); // Stop moving right
-      moveLeftInterval = setInterval(moveSliderLeft, 10); // Start moving left
+      moveLeftInterval = setInterval(moveSliderLeft, 5); // Start moving left
     }
   }
 
   // Function to move the slider to the left
   function moveSliderLeft() {
-    clearCanvas(); // Clear the canvas before redrawing
+    clearCanvas();
     if (sliderX > 0) {
-      sliderX -= 1; // Move the slider left
-      drawSlider(); // Redraw the slider
-      drawHitboxes(); // Redraw hitboxes
+        sliderX -= 1; // Move the slider left
+        drawSlider(); // Redraw the slider
+        drawHitboxes(); // Redraw hitboxes
     } else {
-      // If the slider reaches the left edge, stop moving
-      clearInterval(moveLeftInterval);
+        clearInterval(moveLeftInterval);
+        // Here, call the function to possibly start the next round,
+        // but only if we are within a set and not all rounds are completed.
+        if (currentRound < totalRoundsInSet) {
+            nextRound(); // Assuming nextRound is accessible and designed to handle this logic
+        }
     }
-  }
+}
 
 // Function to create hitboxes with updated constraints
 function createHitboxes() {
@@ -146,8 +154,7 @@ function createHitboxes() {
     }
   }
 
-  // Variables to control the interval functions for moving the slider
-  let moveRightInterval, moveLeftInterval;
+
 
   // Event listener for keydown events
   document.addEventListener('keydown', (e) => {
@@ -156,9 +163,34 @@ function createHitboxes() {
     }
   });
 
-  // Initialize game elements
-  createHitboxes();
-  drawSlider();
-  drawHitboxes();
-  moveRightInterval = setInterval(moveSliderRight, 10);
+  
+
+
+  function startSet() {
+    createHitboxes(); // Create hitboxes once per set
+    drawHitboxes(); // Draw hitboxes for the entire set
+    currentRound = 0; // Reset the round counter at the start of a set
+    nextRound(); // Start the first round
+  }
+  function nextRound() {
+    if (currentRound < totalRoundsInSet) {
+        currentRound++; // Increment the round counter
+        startRound(); // Start the round
+    } else {
+        // Optional: Do something once all rounds in the set are completed
+    }
+  }
+  function startRound() {
+    clearCanvas(); // Clear canvas at the start of each round
+    sliderX = 0; // Reset slider position to the left
+    drawSlider(); // Draw the slider at the starting position
+    drawHitboxes(); // Ensure hitboxes are drawn, but not recreated
+    moveRightInterval = setInterval(moveSliderRight, 5); // Start moving right
+    // moveLeftInterval is now set at the end of moveSliderRight's execution
+  }
+
+
+
+  //Start game
+  startSet();
 });
