@@ -85,6 +85,7 @@ nav {
     width:100%;
     height: 100%;
     background-color: rgba(44,45,49,0.8);
+    display: none;
 }
 h1{
     z-index: 3;
@@ -130,26 +131,12 @@ h1{
     height: 2rem;
 }
 
-.slidercontainer {
+.canvasContainer{
     margin-top: 5px;
-    width: 375px; /* Width of the outside container */
-    bottom: 60px;
-  }
-/* The slider itself */
-.slider {
-    margin: auto;
-    width: 320px; /* Full-width */
-    height: 70px; /* Specified height */
-    background: black; /* Grey background */
-    position: relative;
 }
 
-.slider__pointer {
-    appearance: none;
-    width: 10px;
-    height: 70px; 
-    background: white;
-    position: absolute;
+.canvasContainer canvas{
+    margin: auto;
 }
   
 
