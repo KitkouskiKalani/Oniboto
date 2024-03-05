@@ -42,12 +42,14 @@ document.addEventListener('DOMContentLoaded', () => {
   let sliderHeight = canvasHeight;
   let sliderX = 0; // Starting X position of the slider
 
-  // Array to store hitboxes
-  let hitboxes = [];
 
-  let moveRightInterval, moveLeftInterval;
+  let movingLeft = false;
+  let isAnimating = false; // Flag to control the animation loop
   let currentRound = 0;
   const totalRoundsInSet = 4; // How many rounds in a set
+
+  // Array to store hitboxes
+  let hitboxes = [];
 
   // Function to draw the slider on the canvas
   function drawSlider() {
@@ -60,74 +62,77 @@ document.addEventListener('DOMContentLoaded', () => {
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
   }
 
-  // Function to move the slider to the right
-  function moveSliderRight() {
-    clearCanvas(); // Clear the canvas before redrawing
-    // Check if the slider is within the bounds of the canvas
-    if (sliderX < canvasWidth - sliderWidth) {
-      sliderX += 1; // Move the slider right
-      drawSlider(); // Redraw the slider
-      drawHitboxes(); // Redraw hitboxes
-    } else {
-      // If the slider reaches the right edge, switch direction
-      clearInterval(moveRightInterval); // Stop moving right
-      moveLeftInterval = setInterval(moveSliderLeft, 5); // Start moving left
-    }
-  }
+  
+  function animateSlider() {
+    if (!isAnimating) return; // Stop the animation if the flag is false
 
-  // Function to move the slider to the left
-  function moveSliderLeft() {
     clearCanvas();
-    if (sliderX > 0) {
-        sliderX -= 1; // Move the slider left
-        drawSlider(); // Redraw the slider
-        drawHitboxes(); // Redraw hitboxes
+    drawHitboxes();
+    drawSlider();
+
+    // Update the slider's position
+    if (!movingLeft) {
+        if (sliderX < canvasWidth - sliderWidth) {
+            sliderX += 1; // Adjust for smoother movement
+        } else {
+            movingLeft = true; // Change direction
+        }
     } else {
-        clearInterval(moveLeftInterval);
-        // Here, call the function to possibly start the next round,
-        // but only if we are within a set and not all rounds are completed.
-        if (currentRound < totalRoundsInSet) {
-            nextRound(); // Assuming nextRound is accessible and designed to handle this logic
+        if (sliderX > 0) {
+            sliderX -= 1;
+        } else {
+            movingLeft = false;
+            currentRound++;
+            if (currentRound >= totalRoundsInSet) {
+                isAnimating = false; // Stop the animation after the last round
+                return; // Optionally start a new set or end the game here
+            }
+            // Reset slider for the next round without stopping the animation
+            sliderX = 0;
+            movingLeft = false;
         }
     }
+
+    requestAnimationFrame(animateSlider);
 }
+  
 
-// Function to create hitboxes with updated constraints
-function createHitboxes() {
-  hitboxes = []; // Reset hitboxes array
-  let minGapBetweenHitboxes = 25; // Minimum gap between hitboxes
-  let safeZoneStart = 50; // No hitbox can start within this distance from the canvas start
-  let attempts = 0; // Track attempts to avoid infinite loops
-  let maxAttempts = 100; // Maximum attempts to place hitboxes
+  // Function to create hitboxes with updated constraints
+  function createHitboxes() {
+    hitboxes = []; // Reset hitboxes array
+    let minGapBetweenHitboxes = 25; // Minimum gap between hitboxes
+    let safeZoneStart = 50; // No hitbox can start within this distance from the canvas start
+    let attempts = 0; // Track attempts to avoid infinite loops
+    let maxAttempts = 100; // Maximum attempts to place hitboxes
 
-  while (hitboxes.length < 3 && attempts < maxAttempts) {
-    let width = Math.floor(Math.random() * (16 - 8 + 1)) + 8; // Random width between 8 and 16px
-    // Ensure random x position respects the safe zone and potential maximum width of hitboxes
-    let x = Math.floor(Math.random() * (canvasWidth - width - safeZoneStart)) + safeZoneStart;
+    while (hitboxes.length < 3 && attempts < maxAttempts) {
+      let width = Math.floor(Math.random() * (16 - 8 + 1)) + 8; // Random width between 8 and 16px
+      // Ensure random x position respects the safe zone and potential maximum width of hitboxes
+      let x = Math.floor(Math.random() * (canvasWidth - width - safeZoneStart)) + safeZoneStart;
 
-    let validPlacement = true; // Assume this placement is valid initially
+      let validPlacement = true; // Assume this placement is valid initially
 
-    // Check against all previously placed hitboxes for valid placement
-    for (let hitbox of hitboxes) {
-      let distance = Math.abs(x - hitbox.x);
-      // If new hitbox is too close to an existing one, invalidate this placement
-      if (distance < width + minGapBetweenHitboxes || x < safeZoneStart) {
-        validPlacement = false;
-        break;
+      // Check against all previously placed hitboxes for valid placement
+      for (let hitbox of hitboxes) {
+        let distance = Math.abs(x - hitbox.x);
+        // If new hitbox is too close to an existing one, invalidate this placement
+        if (distance < width + minGapBetweenHitboxes || x < safeZoneStart) {
+          validPlacement = false;
+          break;
+        }
+      }
+
+      // If valid, add the new hitbox to the array
+      if (validPlacement) {
+        hitboxes.push({ x, width });
+      } else {
+        attempts++; // Increment attempts if placement was not valid
       }
     }
 
-    // If valid, add the new hitbox to the array
-    if (validPlacement) {
-      hitboxes.push({ x, width });
-    } else {
-      attempts++; // Increment attempts if placement was not valid
-    }
+    // Ensure hitboxes are sorted by their x position for consistent rendering
+    hitboxes.sort((a, b) => a.x - b.x);
   }
-
-  // Ensure hitboxes are sorted by their x position for consistent rendering
-  hitboxes.sort((a, b) => a.x - b.x);
-}
 
   
 
@@ -169,24 +174,19 @@ function createHitboxes() {
   function startSet() {
     createHitboxes(); // Create hitboxes once per set
     drawHitboxes(); // Draw hitboxes for the entire set
+    sliderX = 0; // Reset slider position to the left
     currentRound = 0; // Reset the round counter at the start of a set
-    nextRound(); // Start the first round
-  }
-  function nextRound() {
-    if (currentRound < totalRoundsInSet) {
-        currentRound++; // Increment the round counter
-        startRound(); // Start the round
-    } else {
-        // Optional: Do something once all rounds in the set are completed
-    }
+    movingLeft = false; // Start moving right
+    isAnimating = true; // Start the animation
+    startRound(); // Start the first round
   }
   function startRound() {
-    clearCanvas(); // Clear canvas at the start of each round
-    sliderX = 0; // Reset slider position to the left
-    drawSlider(); // Draw the slider at the starting position
-    drawHitboxes(); // Ensure hitboxes are drawn, but not recreated
-    moveRightInterval = setInterval(moveSliderRight, 5); // Start moving right
-    // moveLeftInterval is now set at the end of moveSliderRight's execution
+    // clearCanvas(); // Clear canvas at the start of each round
+    
+    // drawSlider(); // Draw the slider at the starting position
+    // drawHitboxes(); // Ensure hitboxes are drawn, but not recreated
+    isAnimating = true; // Ensure the animation loop continues
+    animateSlider();
   }
 
 
