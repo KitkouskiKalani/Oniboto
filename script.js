@@ -50,39 +50,50 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   
-  function animateSlider() {
-    if (!isAnimating) return; // Stop the animation if the flag is false
+  let lastTime = 0; // Tracks the last frame time
+const sliderSpeed = 100; // Slider speed in pixels per second
+
+function animateSlider(time) {
+    if (!isAnimating) return;
+
+    if (!lastTime) {
+        lastTime = time;
+    }
+
+    const deltaTime = (time - lastTime) / 1000; // Time elapsed in seconds
+    lastTime = time;
 
     clearCanvas();
     drawHitboxes();
-    drawSlider();
 
-    // Update the slider's position
+    // Determine movement based on elapsed time and speed
     if (!movingLeft) {
         if (sliderX < canvasWidth - sliderWidth) {
-            sliderX += 1; // Adjust for smoother movement
+            sliderX += sliderSpeed * deltaTime; // Move right
         } else {
             movingLeft = true; // Change direction
         }
     } else {
         if (sliderX > 0) {
-            sliderX -= 1;
+            sliderX -= sliderSpeed * deltaTime; // Move left
         } else {
             movingLeft = false;
             currentRound++;
             endOfRound();
             if (currentRound >= totalRoundsInSet) {
-                isAnimating = false; // Stop the animation after the last round
-                return; // Optionally start a new set or end the game here
+                isAnimating = false;
+                lastTime = 0; // Reset lastTime for the next animation start
+                return;
             }
             // Reset slider for the next round without stopping the animation
             sliderX = 0;
-            movingLeft = false;
         }
     }
 
+    drawSlider();
     requestAnimationFrame(animateSlider);
-  }
+}
+
   function endOfRound() {
     console.log("round " + currentRound)
     // Assume hitboxesDestroyed is a condition that checks if all hitboxes are destroyed
