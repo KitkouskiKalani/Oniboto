@@ -229,7 +229,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Event listener for keydown events
   document.addEventListener('keydown', (e) => {
-    if (e.code === 'Space') {
+    if (e.code === 'Space' || e.key === ' ' || e.keyCode === 32) {
+      e.preventDefault(); // Prevent the default space key action (scrolling down)
       checkHit();
     }
   });
