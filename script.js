@@ -33,7 +33,6 @@ document.addEventListener('DOMContentLoaded', () => {
   let movingLeft = false;
   let isAnimating = false; // Flag to control the animation loop
   let currentRound = 0;
-  let totalRoundsInSet; // How many rounds in a set
 
   // Array to store hitboxes
   let hitboxes = [];
@@ -51,72 +50,113 @@ document.addEventListener('DOMContentLoaded', () => {
 
   
   let lastTime = 0; // Tracks the last frame time
-const sliderSpeed = 100; // Slider speed in pixels per second
+  const sliderSpeed = 100; // Slider speed in pixels per second
 
-function animateSlider(time) {
+  let touchRightCounter = 0;
+  let isPausing = false;
+  function pauseSlider() {
+    isPausing = true; // Indicate that the slider should pause
+  
+    setTimeout(() => {
+      // After 800ms, allow the slider to move again
+      isPausing = false;
+    }, 800);
+  }
+  function animateSlider(time) {
     if (!isAnimating) return;
 
     if (!lastTime) {
         lastTime = time;
     }
 
+
     const deltaTime = (time - lastTime) / 1000; // Time elapsed in seconds
     lastTime = time;
 
     clearCanvas();
     drawHitboxes();
+    drawSlider();
 
-    // Determine movement based on elapsed time and speed
-    if (!movingLeft) {
-        if (sliderX < canvasWidth - sliderWidth) {
-            sliderX += sliderSpeed * deltaTime; // Move right
-        } else {
-            movingLeft = true; // Change direction
-        }
-    } else {
-        if (sliderX > 0) {
-            sliderX -= sliderSpeed * deltaTime; // Move left
-        } else {
+    if(!isPausing){
+      // Determine movement based on elapsed time and speed
+      if (!movingLeft) {
+          if (sliderX < canvasWidth - sliderWidth) {
+              sliderX += sliderSpeed * deltaTime; // Move right
+          } else {
+              movingLeft = true; // Change direction
+              if(touchRightCounter>=1){
+                if (hitboxesDestroyed()) {
+                  console.log('all hitboxes destroyed')
+                }
+                switch (currentSet) {
+                  case 1:
+                      if (playerShieldOne > 0 && hitboxes.length>0) playerShieldOne--;
+                      break;
+                  case 2:
+                      if (playerShieldTwo > 0 && hitboxes.length>0) playerShieldTwo--;
+                      break;
+                  case 3:
+                      if (playerShieldThree > 0 && hitboxes.length>0) playerShieldThree--;
+                      break;
+                }
+                updateVisuals();
+              }
+              touchRightCounter++;
+          }
+      } else {
+          if (sliderX > 0) {
+              sliderX -= sliderSpeed * deltaTime; // Move left
+          } else {
             movingLeft = false;
             currentRound++;
             endOfRound();
-            if (currentRound >= totalRoundsInSet) {
-                isAnimating = false;
-                lastTime = 0; // Reset lastTime for the next animation start
-                return;
-            }
+            
             // Reset slider for the next round without stopping the animation
             sliderX = 0;
-        }
+          }
+      }
     }
+    
 
-    drawSlider();
+    
     requestAnimationFrame(animateSlider);
-}
+  }
 
   function endOfRound() {
-    console.log("round " + currentRound)
     // Assume hitboxesDestroyed is a condition that checks if all hitboxes are destroyed
     if (hitboxesDestroyed()) {
-      if (enemyHealth > 0) {
-          enemyHealth--; // Decrement enemy health
-          updateEnemyHealthVisuals(); // Update the visual representation of enemy health
+      if (enemyHealth == 0) {
+            gameWon();
       }
       startNextSet(); // Proceed to the next set
-    } else {
+      
+    } else if(currentSet==1 && currentRound==1){updateVisuals();}
+      else {
         // Subtract from the current set's shield or health if not all hitboxes are destroyed
         switch (currentSet) {
             case 1:
                 if (playerShieldOne > 0) playerShieldOne--;
-                else if (playerHealth > 0) playerHealth--;
+                else if (playerHealth > 0){
+                  playerHealth--;
+                  pauseSlider();
+                  playerHitAnimation();
+                } 
                 break;
             case 2:
                 if (playerShieldTwo > 0) playerShieldTwo--;
-                else if (playerHealth > 0) playerHealth--;
+                else if (playerHealth > 0){
+                  playerHealth--;
+                  pauseSlider();
+                  playerHitAnimation();
+                } 
                 break;
             case 3:
                 if (playerShieldThree > 0) playerShieldThree--;
-                else if (playerHealth > 0) playerHealth--;
+                else if (playerHealth > 0){
+                  playerHealth--;
+                  pauseSlider();
+                  playerHitAnimation();
+                } 
                 break;
         }
         updateVisuals();
@@ -128,32 +168,57 @@ function animateSlider(time) {
   }
   function updateVisuals() {
     // Update shields and health visuals based on current values
-    updateShieldVisuals(); // You have this function already
-    updateHeartVisuals(); // Update hearts based on playerHealth
+    updateShieldVisuals();
+    updateHeartVisuals();
+    updateEnemyHealthVisuals();
+    updateMiniShieldColors();
   }
   function updateShieldVisuals() {
     // Update shield visuals for Shield One (Blue)
     for (let i = 1; i <= 3; i++) {
         if (i > playerShieldOne) {
-            document.querySelector(`.shield${i}.blue`).style.backgroundColor = 'black';
+            document.querySelector(`.shield${i}.blue`).style.backgroundColor = 'gray';
         }
     }
     
     // Update shield visuals for Shield Two (Teal)
     for (let i = 4; i <= 6; i++) {
         if (i - 3 > playerShieldTwo) {
-            document.querySelector(`.shield${i}.teal`).style.backgroundColor = 'black';
+            document.querySelector(`.shield${i}.teal`).style.backgroundColor = 'gray';
         }
     }
     
     // Update shield visuals for Shield Three (Yellow)
     for (let i = 7; i <= 9; i++) {
         if (i - 6 > playerShieldThree) {
-            document.querySelector(`.shield${i}.yellow`).style.backgroundColor = 'black';
+            document.querySelector(`.shield${i}.yellow`).style.backgroundColor = 'gray';
         }
     }
   }
 
+  function updateMiniShieldColors() {
+    // Determine which set is currently being played to decide which shields to represent
+    switch (currentSet) {
+        case 1:
+            // For set 1, we're updating minishield1 based on playerShieldOne
+            document.querySelector('.minishield1').style.backgroundColor = playerShieldOne > 2 ? '#3588de' : 'gray';
+            document.querySelector('.minishield2').style.backgroundColor = playerShieldOne > 1 ? '#3588de' : 'gray';
+            document.querySelector('.minishield3').style.backgroundColor = playerShieldOne > 0 ? '#3588de' : 'gray';
+            break;
+        case 2:
+            // For set 2, assuming minishield2 represents the status of playerShieldTwo
+            document.querySelector('.minishield1').style.backgroundColor = playerShieldTwo > 2 ? '#04ad9d' : 'gray';
+            document.querySelector('.minishield2').style.backgroundColor = playerShieldTwo > 1 ? '#04ad9d' : 'gray';
+            document.querySelector('.minishield3').style.backgroundColor = playerShieldTwo > 0 ? '#04ad9d' : 'gray';
+            break;
+        case 3:
+            // For set 3, minishield3 represents the status of playerShieldThree
+            document.querySelector('.minishield1').style.backgroundColor = playerShieldThree > 2 ? '#e9dd3b' : 'gray';
+            document.querySelector('.minishield2').style.backgroundColor = playerShieldThree > 1 ? '#e9dd3b' : 'gray';
+            document.querySelector('.minishield3').style.backgroundColor = playerShieldThree > 0 ? '#e9dd3b' : 'gray';
+            break;
+    }
+  }
   function updateHeartVisuals() {
     for (let i = 1; i <= 3; i++) {
         if (i > playerHealth) {
@@ -225,9 +290,22 @@ function animateSlider(time) {
   function checkHit() {
     let hit = hitboxes.some(hitbox => sliderX + sliderWidth >= hitbox.x && sliderX <= hitbox.x + hitbox.width);
     if (hit) {
+
       console.log('Hit!'); // Log hit to the console
       // Remove hit hitbox from the array
       hitboxes = hitboxes.filter(hitbox => !(sliderX + sliderWidth >= hitbox.x && sliderX <= hitbox.x + hitbox.width));
+      if(hitboxesDestroyed()){
+        if (enemyHealth > 0) {
+          enemyHitAnimation();
+          pauseSlider();
+          enemyHealth--; // Decrement enemy health
+          updateEnemyHealthVisuals(); // Update the visual representation of enemy health
+          if(enemyHealth==0){
+            gameWon();
+          }
+        }
+      }
+      
       clearCanvas();
       drawSlider(); // Redraw the slider without the hit hitbox
       drawHitboxes(); // Redraw remaining hitboxes
@@ -240,16 +318,34 @@ function animateSlider(time) {
 
   // Event listener for keydown events
   document.addEventListener('keydown', (e) => {
-    if (e.code === 'Space' || e.key === ' ' || e.keyCode === 32) {
+    if (e.code === 'Space' || e.key === ' ') {
       e.preventDefault(); // Prevent the default space key action (scrolling down)
-      checkHit();
+      if(gameStarted){
+        checkHit();
+      }
+      else{
+        gameStarted = true;
+        startSet()
+      }
+      
     }
   });
+
   // Add an event listener for touchstart events
   document.addEventListener('touchstart', (e) => {
-    checkHit();
-    e.preventDefault(); // Optional: Prevent the default action to avoid scrolling or other touch behaviors
-  });
+    e.preventDefault();
+    if(gameStarted){
+      checkHit();
+    }
+    else{
+      gameStarted = true;
+      startSet()
+    }
+  }, {passive: false});
+
+  document.addEventListener('contextmenu', function(e) {
+  e.preventDefault(); // Prevent showing the context menu
+  }, false);
 
   
 
@@ -257,10 +353,10 @@ function animateSlider(time) {
     if (currentSet < 3) {
         currentSet++;
         currentRound=0;
-        resetHitboxes(); // Resets hitboxes for the new set
+        updateVisuals();
+        startSet(); // Resets hitboxes for the new set
     } else {
-        // You've completed all sets, implement win logic or reset for a new game
-        console.log("All sets completed, game won!");
+        gameWon();
         isAnimating = false;  
     }
   }
@@ -270,7 +366,6 @@ function animateSlider(time) {
   }
   function startSet() {
     resetHitboxes();
-    calculateTotalRounds();
     sliderX = 0; // Reset slider position to the left
     currentRound = 0; // Reset the round counter at the start of a set
     movingLeft = false; // Start moving right
@@ -281,26 +376,31 @@ function animateSlider(time) {
     // Reset or recreate hitboxes for the new set
     createHitboxes();
     drawHitboxes();
-}
-  function calculateTotalRounds() {
-    totalRoundsInSet = 3 + playerHealth; // 3 shields + player's remaining health
   }
+
   function startRound() {
-    // clearCanvas(); // Clear canvas at the start of each round
-    
-    // drawSlider(); // Draw the slider at the starting position
-    // drawHitboxes(); // Ensure hitboxes are drawn, but not recreated
     isAnimating = true; // Ensure the animation loop continues
     animateSlider();
   }
 
+  function playerHitAnimation(){
+    console.log('playerHit')
+  }
+  function enemyHitAnimation(){
+    console.log('enemyHit')
+  }
+  function gameWon(){
+    enemyHealth = 0;
+    updateVisuals();
+    isAnimating =false;
+    console.log("Game Won");
+  }
   function gameOver() {
+    isAnimating =false;
     console.log("Game Over");
     // Implement additional game over logic here
     // This could include stopping the game animation, showing a game over screen, etc.
-}
+  }
 
-
-  //Start game
-  startSet();
+  
 });

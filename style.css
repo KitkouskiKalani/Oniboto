@@ -133,10 +133,39 @@ h1{
 
 .canvasContainer{
     margin-top: 5px;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.ministat {
+width: 10px;
+height: 70px; /* Set height to match the canvas height */
+/* Default color */
+background-color: var(--clr-shield-one);
+position: absolute; /* Positioning absolute to place them next to the canvas */
+}
+.minishield1 {
+    left: 347px; /* Align to the left of the canvasContainer */
+}
+
+.minishield2 {
+    left: 17px; /* 5px to the right of the first ministat */
+}
+
+.minishield3 {
+    left: 359px; /* 10px to the right of the first ministat, 5px to the right of the second */
+}
+
+.minihealth {
+    background-color: var(--clr-health);
+    left: 5px; /* Positioned after the last ministat */
 }
 
 .canvasContainer canvas{
     margin: auto;
+    z-index: 1; /* Ensure the canvas is above the ministats in case of overlap */
+    position: relative; /* Needed for z-index to work */
 }
   
 
