@@ -1,27 +1,14 @@
 const pregame = document.querySelector(".pregame");
 let gameStarted = false;
+let gameOver = false;
 let animation;
+let currentSet = 1;
 let playerHealth = 3;
-let playerShield = 9;
+let playerShieldOne = 3;
+let playerShieldTwo = 3;
+let playerShieldThree = 3;
 let enemyHealth = 3;
 
-
-// Use DOMContentLoaded event to ensure the DOM is fully loaded immediately followed by creating the blocks 
-// document.addEventListener('DOMContentLoaded', createBlocks());
-// startGame();
-
-// document.body.onkeydown = function(e) {
-//   if ((e.key == " " || e.code == "Space" || e.keyCode == 32) && !gameStarted) {
-//     e.preventDefault();
-//     // Start game here after user clicks space
-//     // startGame();
-    
-//   } else if (e.key == " " || e.code == "Space" || e.keyCode == 32) {
-//     e.preventDefault();
-//     console.log("spacebar is clicked")
-//     calculateAnimation();
-//   }
-// };
 
 // Wait for the HTML document to be fully loaded before running the script
 document.addEventListener('DOMContentLoaded', () => {
@@ -46,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let movingLeft = false;
   let isAnimating = false; // Flag to control the animation loop
   let currentRound = 0;
-  const totalRoundsInSet = 4; // How many rounds in a set
+  let totalRoundsInSet; // How many rounds in a set
 
   // Array to store hitboxes
   let hitboxes = [];
@@ -83,6 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             movingLeft = false;
             currentRound++;
+            endOfRound();
             if (currentRound >= totalRoundsInSet) {
                 isAnimating = false; // Stop the animation after the last round
                 return; // Optionally start a new set or end the game here
@@ -94,8 +82,86 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     requestAnimationFrame(animateSlider);
-}
-  
+  }
+  function endOfRound() {
+    console.log("round " + currentRound)
+    // Assume hitboxesDestroyed is a condition that checks if all hitboxes are destroyed
+    if (hitboxesDestroyed()) {
+      if (enemyHealth > 0) {
+          enemyHealth--; // Decrement enemy health
+          updateEnemyHealthVisuals(); // Update the visual representation of enemy health
+      }
+      startNextSet(); // Proceed to the next set
+    } else {
+        // Subtract from the current set's shield or health if not all hitboxes are destroyed
+        switch (currentSet) {
+            case 1:
+                if (playerShieldOne > 0) playerShieldOne--;
+                else if (playerHealth > 0) playerHealth--;
+                break;
+            case 2:
+                if (playerShieldTwo > 0) playerShieldTwo--;
+                else if (playerHealth > 0) playerHealth--;
+                break;
+            case 3:
+                if (playerShieldThree > 0) playerShieldThree--;
+                else if (playerHealth > 0) playerHealth--;
+                break;
+        }
+        updateVisuals();
+    }
+
+    if (playerHealth <= 0) {
+        gameOver(); // Handle game over scenario
+    }
+  }
+  function updateVisuals() {
+    // Update shields and health visuals based on current values
+    updateShieldVisuals(); // You have this function already
+    updateHeartVisuals(); // Update hearts based on playerHealth
+  }
+  function updateShieldVisuals() {
+    // Update shield visuals for Shield One (Blue)
+    for (let i = 1; i <= 3; i++) {
+        if (i > playerShieldOne) {
+            document.querySelector(`.shield${i}.blue`).style.backgroundColor = 'black';
+        }
+    }
+    
+    // Update shield visuals for Shield Two (Teal)
+    for (let i = 4; i <= 6; i++) {
+        if (i - 3 > playerShieldTwo) {
+            document.querySelector(`.shield${i}.teal`).style.backgroundColor = 'black';
+        }
+    }
+    
+    // Update shield visuals for Shield Three (Yellow)
+    for (let i = 7; i <= 9; i++) {
+        if (i - 6 > playerShieldThree) {
+            document.querySelector(`.shield${i}.yellow`).style.backgroundColor = 'black';
+        }
+    }
+  }
+
+  function updateHeartVisuals() {
+    for (let i = 1; i <= 3; i++) {
+        if (i > playerHealth) {
+            document.querySelector(`.player__heart.heart${i}`).style.backgroundColor = 'black';
+        }
+    }
+  }
+
+  function updateEnemyHealthVisuals() {
+    // Directly set hearts that exceed current enemyHealth to black
+    for (let i = 1; i <= 3; i++) {
+        const heart = document.querySelector(`.enemy__heart.heart${i}`);
+        if (heart) { // Ensure the heart element exists to avoid errors
+            heart.style.backgroundColor = i <= enemyHealth ? "" : "black"; // Set exceeded hearts to black
+        }
+    }
+  }
+
+
 
   // Function to create hitboxes with updated constraints
   function createHitboxes() {
@@ -167,18 +233,45 @@ document.addEventListener('DOMContentLoaded', () => {
       checkHit();
     }
   });
+  // Add an event listener for touchstart events
+  document.addEventListener('touchstart', (e) => {
+    checkHit();
+    e.preventDefault(); // Optional: Prevent the default action to avoid scrolling or other touch behaviors
+  });
 
   
 
-
+  function startNextSet() {
+    if (currentSet < 3) {
+        currentSet++;
+        currentRound=0;
+        resetHitboxes(); // Resets hitboxes for the new set
+    } else {
+        // You've completed all sets, implement win logic or reset for a new game
+        console.log("All sets completed, game won!");
+        isAnimating = false;  
+    }
+  }
+  function hitboxesDestroyed() {
+    // Example check, replace with your actual logic
+    return hitboxes.length === 0;
+  }
   function startSet() {
-    createHitboxes(); // Create hitboxes once per set
-    drawHitboxes(); // Draw hitboxes for the entire set
+    resetHitboxes();
+    calculateTotalRounds();
     sliderX = 0; // Reset slider position to the left
     currentRound = 0; // Reset the round counter at the start of a set
     movingLeft = false; // Start moving right
     isAnimating = true; // Start the animation
     startRound(); // Start the first round
+  }
+  function resetHitboxes() {
+    // Reset or recreate hitboxes for the new set
+    createHitboxes();
+    drawHitboxes();
+}
+  function calculateTotalRounds() {
+    totalRoundsInSet = 3 + playerHealth; // 3 shields + player's remaining health
   }
   function startRound() {
     // clearCanvas(); // Clear canvas at the start of each round
@@ -189,6 +282,11 @@ document.addEventListener('DOMContentLoaded', () => {
     animateSlider();
   }
 
+  function gameOver() {
+    console.log("Game Over");
+    // Implement additional game over logic here
+    // This could include stopping the game animation, showing a game over screen, etc.
+}
 
 
   //Start game
