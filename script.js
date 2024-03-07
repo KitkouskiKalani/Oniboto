@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // Determine movement based on elapsed time and speed
       if (!movingLeft) {
           if (sliderX < canvasWidth - sliderWidth) {
-              sliderX += sliderSpeed * deltaTime + (currentSet *.07); // Move right
+              sliderX += sliderSpeed * deltaTime + (currentSet *.04); // Move right
           } else {
               movingLeft = true; // Change direction
               if(touchRightCounter>=1){
@@ -131,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
           }
       } else {
           if (sliderX > 0) {
-              sliderX -= sliderSpeed * deltaTime + (currentSet *.07) ; // Move left
+              sliderX -= sliderSpeed * deltaTime + (currentSet *.04) ; // Move left
           } else {
             movingLeft = false;
             currentRound++;
@@ -351,6 +351,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       else{
         gameStarted = true;
+        document.querySelector(".pregame").style.display = 'none';
         startSet()
       }
       
@@ -365,6 +366,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     else{
       gameStarted = true;
+      document.querySelector(".pregame").style.display = 'none';
       startSet()
     }
   }, {passive: false});
