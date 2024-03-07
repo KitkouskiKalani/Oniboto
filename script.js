@@ -54,11 +54,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let touchRightCounter = 0;
   let isPausing = false;
-  function pauseSlider() {
+  function pauseSlider(characterHit) {
+    const playerImage = document.querySelector('.player__img');
+    const enemyImage = document.querySelector('.enemy__img');
     isPausing = true; // Indicate that the slider should pause
+
+    if(characterHit=="player"){
+      playerImage.src = './player_damage.png';
+    }
+    else if(characterHit=="enemy"){
+      enemyImage.src = './oni_damage.png';
+    }
   
     setTimeout(() => {
       // After 800ms, allow the slider to move again
+      playerImage.src = './player_crop.png';
+      enemyImage.src = './oni.jpg';
       isPausing = false;
     }, 800);
   }
@@ -138,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (playerShieldOne > 0) playerShieldOne--;
                 else if (playerHealth > 0){
                   playerHealth--;
-                  pauseSlider();
+                  pauseSlider("player");
                   playerHitAnimation();
                 } 
                 break;
@@ -146,7 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (playerShieldTwo > 0) playerShieldTwo--;
                 else if (playerHealth > 0){
                   playerHealth--;
-                  pauseSlider();
+                  pauseSlider("player");
                   playerHitAnimation();
                 } 
                 break;
@@ -154,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (playerShieldThree > 0) playerShieldThree--;
                 else if (playerHealth > 0){
                   playerHealth--;
-                  pauseSlider();
+                  pauseSlider("player");
                   playerHitAnimation();
                 } 
                 break;
@@ -297,7 +308,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if(hitboxesDestroyed()){
         if (enemyHealth > 0) {
           enemyHitAnimation();
-          pauseSlider();
+          pauseSlider("enemy");
           enemyHealth--; // Decrement enemy health
           updateEnemyHealthVisuals(); // Update the visual representation of enemy health
           if(enemyHealth==0){
