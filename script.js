@@ -439,7 +439,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let resultTwo = "";
   let resultThree = "";
   let resultFour= "";
-  let result = "Oniboto \n Battle #001 \n";
+  let result = "Oniboto\nBattle #001\n";
   function showResults(){
     let resultOneDisplay = document.querySelector('.resultOne');
     let resultTwoDisplay = document.querySelector('.resultTwo');
