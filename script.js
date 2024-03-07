@@ -79,14 +79,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     else if(characterHit=="enemy"){
       enemyImage.src = './oni_damage.png';
+      startNextSet();
     }
   
     setTimeout(() => {
-      // After 800ms, allow the slider to move again
+      // After 1500ms, allow the slider to move again
       playerImage.src = './player_crop.png';
       enemyImage.src = './oni.jpg';
       isPausing = false;
-    }, 800);
+    }, 1200);
   }
 
   function animateSlider(time) {
@@ -352,7 +353,7 @@ document.addEventListener('DOMContentLoaded', () => {
       else{
         gameStarted = true;
         document.querySelector(".pregame").style.display = 'none';
-        startSet()
+        startSet(true)
       }
       
     }
@@ -393,19 +394,23 @@ document.addEventListener('DOMContentLoaded', () => {
     return hitboxes.length === 0;
   }
 
-  function startSet() {
-    resetHitboxes();
+  function startSet(isFirst) {
+    if(!isFirst){
+      resetHitboxes();
+    }
     sliderX = 0; // Reset slider position to the left
     currentRound = 0; // Reset the round counter at the start of a set
     movingLeft = false; // Start moving right
     isAnimating = true; // Start the animation
     startRound(); // Start the first round
   }
+
   function resetHitboxes() {
     // Reset or recreate hitboxes for the new set
     createHitboxes();
     drawHitboxes();
   }
+  
 
   function startRound() {
     isAnimating = true; // Ensure the animation loop continues
@@ -485,4 +490,11 @@ document.addEventListener('DOMContentLoaded', () => {
       alert('Share API not supported in this browser.');
     }
   }
+
+
+
+  // invoked on game start to show slider and hitboxes while waiting for player to press
+  drawSlider();
+  resetHitboxes();
+
 });
