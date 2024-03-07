@@ -85,8 +85,70 @@ nav {
     width:100%;
     height: 100%;
     background-color: rgba(44,45,49,0.8);
-    display: none;
+    display:none;
 }
+.postgame {
+    display: none;
+    /* display: flex; */
+    z-index: 4;
+    position: absolute;
+    top: 300px;
+    width: 100%;
+    height: 70%;
+    background-color: #2c2d31;
+    color: white;
+    border-top: 3px solid black;
+    flex-direction: column;
+    padding-top: 40px;
+    align-items: center;
+    text-align: center; /* Centers the text of all child elements */
+}
+
+.postgame h2{
+    text-shadow:
+		-1px -1px 0 #000,
+		1px -1px 0 #000,
+		-1px 1px 0 #000,
+		1px 1px 0 #000;
+}
+.postgame h3{
+    text-shadow:
+		-1px -1px 0 #000,
+		1px -1px 0 #000,
+		-1px 1px 0 #000,
+		1px 1px 0 #000;
+}
+
+.postgame button {
+    margin-top: 10px;
+    align-items: center;
+    appearance: none;
+    background-color: #5865f2;
+    background-size: calc(100% + 20px) calc(100% + 20px);
+    border-radius: 100px;
+    border-width: 0;
+    box-shadow: none;
+    box-sizing: border-box;
+    color: #FFFFFF;
+    cursor: pointer;
+    display: inline-flex;
+    font-family: CircularStd,sans-serif;
+    font-size: 1rem;
+    height: auto;
+    justify-content: center;
+    line-height: 1.5;
+    padding: 6px 20px;
+    position: relative;
+    text-align: center;
+    text-decoration: none;
+    transition: background-color .2s,background-position .2s;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    vertical-align: top;
+    white-space: nowrap;
+}
+
 h1{
     z-index: 3;
     position: absolute;

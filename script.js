@@ -12,6 +12,10 @@ let enemyHealth = 3;
 
 // Wait for the HTML document to be fully loaded before running the script
 document.addEventListener('DOMContentLoaded', () => {
+  const shareButton = document.querySelector('.shareBtn');
+  if (shareButton) {
+    shareButton.addEventListener('click', shareWithFriends);
+  }
   // Get the canvas element and its drawing context
   const canvas = document.getElementById('gameCanvas');
   const ctx = canvas.getContext('2d');
@@ -397,20 +401,78 @@ document.addEventListener('DOMContentLoaded', () => {
   function playerHitAnimation(){
     console.log('playerHit')
   }
+
   function enemyHitAnimation(){
     console.log('enemyHit')
   }
+
   function gameWon(){
     enemyHealth = 0;
     updateVisuals();
     isAnimating =false;
     console.log("Game Won");
+    showResults();
   }
+
   function gameOver() {
     isAnimating =false;
     console.log("Game Over");
+    showResults();
     // Implement additional game over logic here
-    // This could include stopping the game animation, showing a game over screen, etc.
+    // showing a game over screen, game sound, etc.
+  }
+  let resultOne = "";
+  let resultTwo = "";
+  let resultThree = "";
+  let resultFour= "";
+  let result = "Battle #001 \n";
+  function showResults(){
+    let resultOneDisplay = document.querySelector('.resultOne');
+    let resultTwoDisplay = document.querySelector('.resultTwo');
+    let resultThreeDisplay = document.querySelector('.resultThree');
+    let resultFourDisplay = document.querySelector('.resultFour');
+    for(let i=1; i<=4; i++){
+      switch (i){
+        case 1:
+          resultOne+="🟦".repeat(playerShieldOne)
+          resultOne+="⬛️".repeat(3-playerShieldOne)
+          break;
+        case 2:
+          resultTwo+="🟩".repeat(playerShieldTwo)
+          resultTwo+="⬛️".repeat(3-playerShieldTwo)
+          break;
+        case 3:
+          resultThree+="🟨".repeat(playerShieldThree)
+          resultThree+="⬛️".repeat(3-playerShieldThree)
+          break;
+        case 4:
+          resultFour+="❤️".repeat(playerHealth)
+          resultFour+="🖤".repeat(3-playerHealth)
+          break;
+      }
+    }
+    resultOneDisplay.innerHTML = resultOne;
+    resultTwoDisplay.innerHTML = resultTwo;
+    resultThreeDisplay.innerHTML = resultThree;
+    resultFourDisplay.innerHTML = resultFour;
+    result += resultOne + "\n" + resultTwo + "\n" + resultThree + "\n" + resultFour + "\n";
+    document.querySelector('.postgame').style.display = 'flex';
+
+  }
+
+  function shareWithFriends() {
+    if (navigator.share) {
+      navigator.share({
+        title: 'Oniboto',
+        text: result,
+        url: window.location.href, // Example: Sharing the current URL
+      })
+      .then(() => console.log('Successful share'))
+      .catch((error) => console.log('Error sharing', error));
+    } else {
+      // Fallback for browsers that do not support the Share API
+      alert('Share API not supported in this browser.');
+    }
   }
 
   
