@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // Determine movement based on elapsed time and speed
       if (!movingLeft) {
           if (sliderX < canvasWidth - sliderWidth) {
-              sliderX += sliderSpeed * deltaTime; // Move right
+              sliderX += sliderSpeed * deltaTime + (currentSet *.07); // Move right
           } else {
               movingLeft = true; // Change direction
               if(touchRightCounter>=1){
@@ -131,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
           }
       } else {
           if (sliderX > 0) {
-              sliderX -= sliderSpeed * deltaTime; // Move left
+              sliderX -= sliderSpeed * deltaTime + (currentSet *.07) ; // Move left
           } else {
             movingLeft = false;
             currentRound++;
@@ -378,6 +378,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function startNextSet() {
     if (currentSet < 3) {
         currentSet++;
+        console.log(currentSet)
         currentRound=0;
         updateVisuals();
         startSet(); // Resets hitboxes for the new set
