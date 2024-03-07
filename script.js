@@ -436,7 +436,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let resultTwo = "";
   let resultThree = "";
   let resultFour= "";
-  let result = "Battle #001 \n";
+  let result = "Oniboto \n Battle #001 \n";
   function showResults(){
     let resultOneDisplay = document.querySelector('.resultOne');
     let resultTwoDisplay = document.querySelector('.resultTwo');
@@ -475,8 +475,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (navigator.share) {
       navigator.share({
         title: 'Oniboto',
-        text: result,
-        url: window.location.href, // Example: Sharing the current URL
+        text: result // Example: Sharing the current URL
       })
       .then(() => console.log('Successful share'))
       .catch((error) => console.log('Error sharing', error));
