@@ -13,8 +13,19 @@ let enemyHealth = 3;
 // Wait for the HTML document to be fully loaded before running the script
 document.addEventListener('DOMContentLoaded', () => {
   const shareButton = document.querySelector('.shareBtn');
+  // Unified event handler for both click and touchstart
+  function handleShareEvent(event) {
+  // Prevent the default action to avoid handling both touchstart and click on touch devices
+  event.preventDefault();
+  shareWithFriends();
+  }
+
   if (shareButton) {
-    shareButton.addEventListener('click', shareWithFriends);
+  // Listen for click events for non-touch devices
+  shareButton.addEventListener('click', handleShareEvent);
+
+  // Listen for touchstart events for touch devices
+  shareButton.addEventListener('touchstart', handleShareEvent);
   }
   // Get the canvas element and its drawing context
   const canvas = document.getElementById('gameCanvas');
