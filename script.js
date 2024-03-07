@@ -9,9 +9,9 @@ let playerShieldTwo = 3;
 let playerShieldThree = 3;
 let enemyHealth = 3;
 
-
 // Wait for the HTML document to be fully loaded before running the script
 document.addEventListener('DOMContentLoaded', () => {
+
   const shareButton = document.querySelector('.shareBtn');
   // Unified event handler for both click and touchstart
   function handleShareEvent(event) {
@@ -63,12 +63,12 @@ document.addEventListener('DOMContentLoaded', () => {
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
   }
 
-  
   let lastTime = 0; // Tracks the last frame time
   const sliderSpeed = 100; // Slider speed in pixels per second
 
   let touchRightCounter = 0;
   let isPausing = false;
+
   function pauseSlider(characterHit) {
     const playerImage = document.querySelector('.player__img');
     const enemyImage = document.querySelector('.enemy__img');
@@ -88,13 +88,13 @@ document.addEventListener('DOMContentLoaded', () => {
       isPausing = false;
     }, 800);
   }
+
   function animateSlider(time) {
     if (!isAnimating) return;
 
     if (!lastTime) {
         lastTime = time;
     }
-
 
     const deltaTime = (time - lastTime) / 1000; // Time elapsed in seconds
     lastTime = time;
@@ -142,9 +142,6 @@ document.addEventListener('DOMContentLoaded', () => {
           }
       }
     }
-    
-
-    
     requestAnimationFrame(animateSlider);
   }
 
@@ -155,7 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
             gameWon();
       }
       startNextSet(); // Proceed to the next set
-      
+
     } else if(currentSet==1 && currentRound==1){updateVisuals();}
       else {
         // Subtract from the current set's shield or health if not all hitboxes are destroyed
@@ -192,6 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
         gameOver(); // Handle game over scenario
     }
   }
+
   function updateVisuals() {
     // Update shields and health visuals based on current values
     updateShieldVisuals();
@@ -199,6 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateEnemyHealthVisuals();
     updateMiniShieldColors();
   }
+
   function updateShieldVisuals() {
     // Update shield visuals for Shield One (Blue)
     for (let i = 1; i <= 3; i++) {
@@ -226,25 +225,26 @@ document.addEventListener('DOMContentLoaded', () => {
     // Determine which set is currently being played to decide which shields to represent
     switch (currentSet) {
         case 1:
-            // For set 1, we're updating minishield1 based on playerShieldOne
+            // For set 1, updating minishield1 based on playerShieldOne
             document.querySelector('.minishield1').style.backgroundColor = playerShieldOne > 2 ? '#3588de' : 'gray';
             document.querySelector('.minishield2').style.backgroundColor = playerShieldOne > 1 ? '#3588de' : 'gray';
             document.querySelector('.minishield3').style.backgroundColor = playerShieldOne > 0 ? '#3588de' : 'gray';
             break;
         case 2:
-            // For set 2, assuming minishield2 represents the status of playerShieldTwo
+            // For set 2
             document.querySelector('.minishield1').style.backgroundColor = playerShieldTwo > 2 ? '#04ad9d' : 'gray';
             document.querySelector('.minishield2').style.backgroundColor = playerShieldTwo > 1 ? '#04ad9d' : 'gray';
             document.querySelector('.minishield3').style.backgroundColor = playerShieldTwo > 0 ? '#04ad9d' : 'gray';
             break;
         case 3:
-            // For set 3, minishield3 represents the status of playerShieldThree
+            // For set 3
             document.querySelector('.minishield1').style.backgroundColor = playerShieldThree > 2 ? '#e9dd3b' : 'gray';
             document.querySelector('.minishield2').style.backgroundColor = playerShieldThree > 1 ? '#e9dd3b' : 'gray';
             document.querySelector('.minishield3').style.backgroundColor = playerShieldThree > 0 ? '#e9dd3b' : 'gray';
             break;
     }
   }
+
   function updateHeartVisuals() {
     for (let i = 1; i <= 3; i++) {
         if (i > playerHealth) {
@@ -375,8 +375,6 @@ document.addEventListener('DOMContentLoaded', () => {
   e.preventDefault(); // Prevent showing the context menu
   }, false);
 
-  
-
   function startNextSet() {
     if (currentSet < 3) {
         currentSet++;
@@ -389,10 +387,12 @@ document.addEventListener('DOMContentLoaded', () => {
         isAnimating = false;  
     }
   }
+
   function hitboxesDestroyed() {
-    // Example check, replace with your actual logic
+    // Checks if hitboxes are all destroyed
     return hitboxes.length === 0;
   }
+
   function startSet() {
     resetHitboxes();
     sliderX = 0; // Reset slider position to the left
@@ -432,9 +432,8 @@ document.addEventListener('DOMContentLoaded', () => {
     isAnimating =false;
     console.log("Game Over");
     showResults();
-    // Implement additional game over logic here
-    // showing a game over screen, game sound, etc.
   }
+
   let resultOne = "";
   let resultTwo = "";
   let resultThree = "";
@@ -471,14 +470,13 @@ document.addEventListener('DOMContentLoaded', () => {
     resultFourDisplay.innerHTML = resultFour;
     result += resultOne + "\n" + resultTwo + "\n" + resultThree + "\n" + resultFour + "\n";
     document.querySelector('.postgame').style.display = 'flex';
-
   }
 
   function shareWithFriends() {
     if (navigator.share) {
       navigator.share({
         title: 'Oniboto',
-        text: result // Example: Sharing the current URL
+        text: result 
       })
       .then(() => console.log('Successful share'))
       .catch((error) => console.log('Error sharing', error));
@@ -487,6 +485,4 @@ document.addEventListener('DOMContentLoaded', () => {
       alert('Share API not supported in this browser.');
     }
   }
-
-  
 });
