@@ -5,8 +5,8 @@ let animation;
 let currentSet = 1;
 let playerHealth = 3;
 let playerShieldOne = 3;
-let playerShieldTwo = 3;
-let playerShieldThree = 3;
+let playerShieldTwo = 0;
+let playerShieldThree = 0;
 let enemyHealth = 3;
 
 // Wait for the HTML document to be fully loaded before running the script
@@ -71,11 +71,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function pauseSlider(characterHit) {
     const playerImage = document.querySelector('.player__img');
+    const playerShields = document.querySelectorAll('.shield'); // Assuming multiple shields
+    const playerHealthHearts = document.querySelectorAll('.player__heart');
+    const canvasToAnimate = document.querySelector('canvas');
+
     const enemyImage = document.querySelector('.enemy__img');
+
     isPausing = true; // Indicate that the slider should pause
 
     if(characterHit=="player"){
       playerImage.src = './player_damage.png';
+       // Apply the pulse effect
+      playerImage.classList.add('pulseEffectPlayer');
+      canvasToAnimate.classList.add('pulseEffectCanvas');
+      playerShields.forEach(shield => shield.classList.add('pulseEffect'));
+      playerHealthHearts.forEach(heart => heart.classList.add('pulseEffect'));
+
+      document.body.offsetHeight;
+
+      setTimeout(() => {
+        // Remove the pulse effect after 1200ms (align with the animation duration)
+        playerImage.classList.remove('pulseEffectPlayer');
+        canvasToAnimate.classList.remove('pulseEffectCanvas');
+        playerShields.forEach(shield => shield.classList.remove('pulseEffect'));
+        playerHealthHearts.forEach(heart => heart.classList.remove('pulseEffect'));
+        playerImage.src = './player_crop.png';
+      }, 1200);
     }
     else if(characterHit=="enemy"){
       enemyImage.src = './oni_damage.png';
@@ -84,10 +105,9 @@ document.addEventListener('DOMContentLoaded', () => {
   
     setTimeout(() => {
       // After 1500ms, allow the slider to move again
-      playerImage.src = './player_crop.png';
       enemyImage.src = './oni.jpg';
       isPausing = false;
-    }, 1200);
+    }, 1500);
   }
 
   function animateSlider(time) {
@@ -205,12 +225,18 @@ document.addEventListener('DOMContentLoaded', () => {
         if (i > playerShieldOne) {
             document.querySelector(`.shield${i}.blue`).style.backgroundColor = 'gray';
         }
+        else{
+            document.querySelector(`.shield${i}.blue`).style.backgroundColor = '#3588de';
+        }
     }
     
     // Update shield visuals for Shield Two (Teal)
     for (let i = 4; i <= 6; i++) {
         if (i - 3 > playerShieldTwo) {
             document.querySelector(`.shield${i}.teal`).style.backgroundColor = 'gray';
+        }
+        else{
+            document.querySelector(`.shield${i}.teal`).style.backgroundColor = '#04ad9d';
         }
     }
     
@@ -219,7 +245,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (i - 6 > playerShieldThree) {
             document.querySelector(`.shield${i}.yellow`).style.backgroundColor = 'gray';
         }
+        else{
+          document.querySelector(`.shield${i}.yellow`).style.backgroundColor = '#e9dd3b';
+        }
     }
+
   }
 
   function updateMiniShieldColors() {
@@ -249,7 +279,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateHeartVisuals() {
     for (let i = 1; i <= 3; i++) {
         if (i > playerHealth) {
-            document.querySelector(`.player__heart.heart${i}`).style.backgroundColor = 'black';
+            document.querySelector(`.player__heart.heart${i}`).style.backgroundColor = 'gray';
         }
     }
   }
@@ -259,7 +289,7 @@ document.addEventListener('DOMContentLoaded', () => {
     for (let i = 1; i <= 3; i++) {
         const heart = document.querySelector(`.enemy__heart.heart${i}`);
         if (heart) { // Ensure the heart element exists to avoid errors
-            heart.style.backgroundColor = i <= enemyHealth ? "" : "black"; // Set exceeded hearts to black
+            heart.style.backgroundColor = i <= enemyHealth ? "" : "gray"; // Set exceeded hearts to black
         }
     }
   }
@@ -381,6 +411,14 @@ document.addEventListener('DOMContentLoaded', () => {
         currentSet++;
         console.log(currentSet)
         currentRound=0;
+        if(currentSet==2){
+          playerShieldTwo=3;
+          updateVisuals();
+        }
+        if(currentSet==3){
+          playerShieldThree=3;
+          updateVisuals();
+        }
         updateVisuals();
         startSet(); // Resets hitboxes for the new set
     } else {

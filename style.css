@@ -305,7 +305,32 @@ position: absolute; /* Positioning absolute to place them next to the canvas */
     background-color: var(--clr-shield-three);
 }
 
+@keyframes pulseDamage {
+    0%, 100% { background-color: gray; }
+    50% { background-color: var(--clr-health); }
+}
+  
+.pulseEffect {
+    animation: pulseDamage 400ms 3; /* 400ms for each pulse, repeat 3 times */
+}
 
+@keyframes pulseDamageCanvas {
+    0%, 100% { background-color: black; }
+    50% { background-color: var(--clr-health); }
+}
+.pulseEffectCanvas {
+    animation: pulseDamageCanvas 400ms 3; /* 400ms for each pulse, repeat 3 times */
+}
+
+@keyframes pulseDamagePlayer {
+    0%, 100% { border: solid 7px black; }
+    50% { border: solid 7px var(--clr-health); }
+  }
+  
+  .pulseEffectPlayer {
+    animation: pulseDamagePlayer 400ms 3; /* 400ms for each pulse, repeating 3 times */
+  }
+  
 
 /* xs */
 /* @media (min-width: 475px) {
