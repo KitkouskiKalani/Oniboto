@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const ctx = canvas.getContext('2d');
 
   // Set initial canvas dimensions
-  let canvasWidth = 320;
+  let canvasWidth = 286;
   let canvasHeight = 70;
   canvas.width = canvasWidth;
   canvas.height = canvasHeight;

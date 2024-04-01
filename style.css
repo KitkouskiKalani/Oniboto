@@ -142,6 +142,7 @@ nav {
     white-space: nowrap;
 }
 .pregame{
+    display: none;
     z-index: 4;
     position: absolute;
     width:100%;
@@ -194,30 +195,35 @@ nav {
     height: 2rem;
 }
 
-.canvasContainer{
+.canvasContainer {
     margin-top: 5px;
     display: flex;
     align-items: center;
+    justify-content: center;
     position: relative;
+    width: 320px; /* Set the width to 300px to accommodate the minishields */
+    margin-left: auto;
+    margin-right: auto;
+}
+canvas{
+    margin: 0px;
 }
 
 .ministat {
-width: 10px;
-height: 70px; /* Set height to match the canvas height */
-/* Default color */
-background-color: var(--clr-shield-one);
-position: absolute; /* Positioning absolute to place them next to the canvas */
+    width: 10px;
+    height: 70px;
+    background-color: var(--clr-shield-one);
 }
 .minishield1 {
-    left: 347px; /* Align to the left of the canvasContainer */
+    margin-left: 2px; /* Position minishield1 to the right of the canvas */
 }
 
 .minishield2 {
-    left: 17px; /* 5px to the right of the first ministat */
+    margin-right: 3px; /* Position minishield2 to the left of the canvas */
 }
 
 .minishield3 {
-    left: 359px; /* 10px to the right of the first ministat, 5px to the right of the second */
+    margin-left: 3px; /* Position minishield3 further to the right of the canvas */
 }
 
 .minihealth {
@@ -229,6 +235,7 @@ position: absolute; /* Positioning absolute to place them next to the canvas */
     margin: auto;
     z-index: 1; /* Ensure the canvas is above the ministats in case of overlap */
     position: relative; /* Needed for z-index to work */
+    margin: 0;
 }
   
 
