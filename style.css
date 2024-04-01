@@ -215,15 +215,15 @@ canvas{
     background-color: var(--clr-shield-one);
 }
 .minishield1 {
-    margin-left: 2px; /* Position minishield1 to the right of the canvas */
+    margin-left: 0px; /* Position minishield1 to the right of the canvas */
 }
 
 .minishield2 {
-    margin-right: 3px; /* Position minishield2 to the left of the canvas */
+    margin-right: 0px; /* Position minishield2 to the left of the canvas */
 }
 
 .minishield3 {
-    margin-left: 3px; /* Position minishield3 further to the right of the canvas */
+    margin-left: 2px; /* Position minishield3 further to the right of the canvas */
 }
 
 .minihealth {
