@@ -222,34 +222,38 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateShieldVisuals() {
     // Update shield visuals for Shield One (Blue)
     for (let i = 1; i <= 3; i++) {
-        if (i > playerShieldOne) {
-            document.querySelector(`.shield${i}.blue`).style.backgroundColor = 'gray';
-        }
-        else{
-            document.querySelector(`.shield${i}.blue`).style.backgroundColor = '#3588de';
-        }
+      if (i > playerShieldOne) {
+        document.querySelector(`.shield${i}.blue`).style.backgroundColor = 'gray';
+      } else {
+        document.querySelector(`.shield${i}.blue`).style.backgroundColor = '#3588de';
+      }
     }
-    
+  
     // Update shield visuals for Shield Two (Teal)
     for (let i = 4; i <= 6; i++) {
+      if (currentSet < 2) {
+        document.querySelector(`.shield${i}.teal`).style.backgroundColor = 'black';
+      } else {
         if (i - 3 > playerShieldTwo) {
-            document.querySelector(`.shield${i}.teal`).style.backgroundColor = 'gray';
+          document.querySelector(`.shield${i}.teal`).style.backgroundColor = 'gray';
+        } else {
+          document.querySelector(`.shield${i}.teal`).style.backgroundColor = '#04ad9d';
         }
-        else{
-            document.querySelector(`.shield${i}.teal`).style.backgroundColor = '#04ad9d';
-        }
+      }
     }
-    
+  
     // Update shield visuals for Shield Three (Yellow)
     for (let i = 7; i <= 9; i++) {
+      if (currentSet < 3) {
+        document.querySelector(`.shield${i}.yellow`).style.backgroundColor = 'black';
+      } else {
         if (i - 6 > playerShieldThree) {
-            document.querySelector(`.shield${i}.yellow`).style.backgroundColor = 'gray';
-        }
-        else{
+          document.querySelector(`.shield${i}.yellow`).style.backgroundColor = 'gray';
+        } else {
           document.querySelector(`.shield${i}.yellow`).style.backgroundColor = '#e9dd3b';
         }
+      }
     }
-
   }
 
   function updateMiniShieldColors() {
