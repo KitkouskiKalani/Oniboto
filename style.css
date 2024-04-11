@@ -331,11 +331,20 @@ canvas{
 @keyframes pulseDamagePlayer {
     0%, 100% { border: solid 7px black; }
     50% { border: solid 7px var(--clr-health); }
-  }
+}
   
-  .pulseEffectPlayer {
+.pulseEffectPlayer {
     animation: pulseDamagePlayer 400ms 3; /* 400ms for each pulse, repeating 3 times */
-  }
+}
+
+@keyframes pulseDamageEnemy {
+    0%, 100% { border: solid 5px black; }
+    50% { border: solid 5px #fb7300; }
+}
+  
+.pulseEffectEnemy {
+    animation: pulseDamageEnemy 400ms 3; /* 400ms for each pulse, repeating 3 times */
+}
   
 
 /* xs */
