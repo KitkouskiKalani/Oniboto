@@ -99,15 +99,33 @@ document.addEventListener('DOMContentLoaded', () => {
       }, 1200);
     }
     else if(characterHit=="enemy"){
+      enemyImage.classList.add('pulseEffectEnemy');
       enemyImage.src = './oni_damage.png';
+      setTimeout(() => {
+        // Remove the pulse effect after 1200ms (align with the animation duration)
+        enemyImage.classList.remove('pulseEffectEnemy');
+        enemyImage.src = './oni.jpg';
+      }, 1200);
       startNextSet();
     }
   
     setTimeout(() => {
       // After 1500ms, allow the slider to move again
-      enemyImage.src = './oni.jpg';
+      
       isPausing = false;
     }, 1500);
+  }
+
+  function pauseSliderSmall(){
+    const enemyImage = document.querySelector('.enemy__img');
+
+    enemyImage.src = './oni_damage.png';
+    isPausing = true;
+    setTimeout(() => {
+      // After 200ms, allow the slider to move again
+      enemyImage.src = './oni.jpg';
+      isPausing = false;
+    }, 400);
   }
 
   function animateSlider(time) {
@@ -138,12 +156,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 switch (currentSet) {
                   case 1:
                       if (playerShieldOne > 0 && hitboxes.length>0) playerShieldOne--;
+                      else if (playerHealth > 0){
+                        playerHealth--;
+                        pauseSlider("player");
+                        playerHitAnimation();
+                      } 
                       break;
                   case 2:
                       if (playerShieldTwo > 0 && hitboxes.length>0) playerShieldTwo--;
+                      else if (playerHealth > 0){
+                        playerHealth--;
+                        pauseSlider("player");
+                        playerHitAnimation();
+                      } 
                       break;
                   case 3:
                       if (playerShieldThree > 0 && hitboxes.length>0) playerShieldThree--;
+                      else if (playerHealth > 0){
+                        playerHealth--;
+                        pauseSlider("player");
+                        playerHitAnimation();
+                      } 
                       break;
                 }
                 updateVisuals();
@@ -365,6 +398,9 @@ document.addEventListener('DOMContentLoaded', () => {
             gameWon();
           }
         }
+      }
+      else{
+        pauseSliderSmall();
       }
       
       clearCanvas();
