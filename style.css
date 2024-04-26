@@ -156,9 +156,8 @@ nav {
     top: 150px;
     text-align: center;
     color: white;
-    -webkit-text-stroke-width: 5px;
-    -webkit-text-stroke-color: black;
-    font-size: 5rem;
+    
+    font-size: 2rem;
 }
 .container{
     width: 375px;
